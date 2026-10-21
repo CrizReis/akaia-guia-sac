@@ -323,6 +323,21 @@ button.pill{cursor:pointer}
 .mod h3{font-size:1.04rem; font-family:"Inter",sans-serif}
 .mod p{margin:0; font-size:.89rem; color:var(--ink-soft)}
 .mod-out{font-size:.86rem; padding-top:11px; border-top:1px dashed var(--border); color:var(--haiiro)}
+.mod.is-locked{background:transparent}
+.mod.is-locked .mod-n{color:var(--haiiro)}
+.mod.is-locked h3{color:var(--haiiro)}
+.mod.is-locked p,.mod.is-locked .pill{opacity:.7}
+.kit-filter{display:inline-flex; flex-wrap:wrap; gap:1px; margin-top:26px; width:fit-content;
+  background:var(--border); border:1px solid var(--border)}
+.kit-filter button{display:inline-flex; align-items:center; gap:8px; font-family:inherit;
+  font-size:.86rem; font-weight:600; padding:10px 18px; border:none; background:var(--kuro-2);
+  color:var(--haiiro); cursor:pointer; transition:all .2s var(--ease)}
+.kit-filter button svg{width:15px; height:15px; flex:none}
+.kit-filter button.is-on{background:var(--akai); color:#fff}
+.kit-filter button:not(.is-on):hover{color:var(--shiro)}
+.kit-filter + .grid{margin-top:14px}
+.res[hidden]{display:none}
+.res-filler{background:var(--kuro-2)}
 .mod-out b{color:var(--shiro)}
 .tag-on{display:inline-flex; font-family:"JetBrains Mono",monospace; font-size:9.5px; font-weight:600;
   letter-spacing:.1em; text-transform:uppercase; color:var(--akai); background:var(--akai-dim);
@@ -1356,12 +1371,14 @@ git commit -m "primeiro commit"</pre>
         <div class="grid grid-2">
           <div class="mod">
             <div class="mod-top"><span class="mod-n">01</span><h3>Website com IA</h3></div>
-            <span class="tag-on">Módulo</span>
+            <span class="tag-on">Liberado</span>
             <p>Constrói o site do zero, a partir do seu briefing — define a estrutura, escreve o conteúdo
               e entrega o código pronto pra publicar.</p>
             <p class="mod-out"><b>Entregável:</b> site no ar, publicado.</p>
             <div class="pill-row">
               <a class="pill" href="https://github.com/wilwaldon/Claude-Code-Frontend-Design-Toolkit">Frontend Design Toolkit</a>
+              <a class="pill" href="https://claude.ai/artifact/5BR12neepj3sMj8F224VKS">web:clone-website</a>
+              <a class="pill" href="https://extractor.akaiafuture.com.br/">extractor.akaiafuture.com.br</a>
               <button type="button" class="pill ref-toggle" aria-expanded="false" aria-controls="ref-site">Referências ▾</button>
             </div>
             <div class="ref-panel" id="ref-site" hidden>
@@ -1395,15 +1412,31 @@ git commit -m "primeiro commit"</pre>
             </div>
           </div>
 
-          <div class="mod">
-            <div class="mod-top"><span class="mod-n">02</span><h3>Clone com IA</h3></div>
-            <span class="tag-on">Módulo</span>
+          <div class="mod is-locked">
+            <div class="mod-top"><span class="mod-n">02</span><h3>Agente de WhatsApp</h3></div>
+            <span class="tag-soon">Em breve</span>
+            <p>Lead chegou — agora atende sem você precisar estar no celular. Qualifica, responde e
+              encaminha pro setor certo.</p>
+            <p class="mod-out"><b>Entregável:</b> atendimento automático rodando 24/7.</p>
+            <div class="pill-row"><span class="pill">padrão Cadeia do Agente Comercial</span></div>
+          </div>
+
+          <div class="mod is-locked">
+            <div class="mod-top"><span class="mod-n">03</span><h3>Agente de Blog</h3></div>
+            <span class="tag-soon">Em breve</span>
+            <p>Produz e publica conteúdo com constância — pauta, texto na voz da marca e publicação,
+              sem depender de você escrever.</p>
+            <p class="mod-out"><b>Entregável:</b> blog publicando sozinho.</p>
+            <div class="pill-row"><span class="pill">em construção</span></div>
+          </div>
+
+          <div class="mod is-locked">
+            <div class="mod-top"><span class="mod-n">04</span><h3>Clone com IA</h3></div>
+            <span class="tag-soon">Em breve</span>
             <p>Parte de um site que já existe: extrai estrutura, estilo e conteúdo, e devolve uma
               versão sua — adaptada à sua marca, não uma cópia.</p>
             <p class="mod-out"><b>Entregável:</b> réplica funcional, no ar, com a sua identidade.</p>
             <div class="pill-row">
-              <a class="pill" href="https://claude.ai/artifact/5BR12neepj3sMj8F224VKS">web:clone-website</a>
-              <a class="pill" href="https://extractor.akaiafuture.com.br/">extractor.akaiafuture.com.br</a>
               <button type="button" class="pill ref-toggle" aria-expanded="false" aria-controls="ref-clone">Referências ▾</button>
             </div>
             <div class="ref-panel" id="ref-clone" hidden>
@@ -1424,35 +1457,17 @@ git commit -m "primeiro commit"</pre>
               </div>
             </div>
           </div>
-          <div class="mod">
-            <div class="mod-top"><span class="mod-n">03</span><h3>Agente de WhatsApp</h3></div>
-            <span class="tag-soon">Módulo</span>
-            <p>Lead chegou — agora atende sem você precisar estar no celular. Qualifica, responde e
-              encaminha pro setor certo.</p>
-            <p class="mod-out"><b>Entregável:</b> atendimento automático rodando 24/7.</p>
-            <div class="pill-row"><span class="pill">padrão Cadeia do Agente Comercial</span></div>
-          </div>
-
-          <div class="mod">
-            <div class="mod-top"><span class="mod-n">04</span><h3>Agente de Blog</h3></div>
-            <span class="tag-soon">Módulo</span>
-            <p>Produz e publica conteúdo com constância — pauta, texto na voz da marca e publicação,
-              sem depender de você escrever.</p>
-            <p class="mod-out"><b>Entregável:</b> blog publicando sozinho.</p>
-            <div class="pill-row"><span class="pill">em construção</span></div>
-          </div>
-
           <div class="mod is-locked">
             <div class="mod-top"><span class="mod-n">05</span><h3>Vídeo com IA</h3></div>
-            <span class="tag-soon">Módulo</span>
+            <span class="tag-soon">Em breve</span>
             <p>Do roteiro à peça pronta — estrutura a narrativa, gera ou edita as cenas e devolve o
               vídeo cortado, legendado e no formato de cada canal.</p>
             <p class="mod-out"><b>Entregável:</b> vídeo pronto pra publicar.</p>
             <div class="pill-row"><span class="pill">em construção</span></div>
           </div>
-          <div class="mod">
+          <div class="mod is-locked">
             <div class="mod-top"><span class="mod-n">06</span><h3>Tráfego</h3></div>
-            <span class="tag-soon">Módulo</span>
+            <span class="tag-soon">Em breve</span>
             <p>Cria o criativo, sobe e otimiza campanhas no Meta Ads a partir de uma frase. Analisa
               relatório, aponta causa de CPA alto e sugere ajuste.</p>
             <p class="mod-out"><b>Entregável:</b> campanha configurada e rodando.</p>
@@ -1480,18 +1495,18 @@ git commit -m "primeiro commit"</pre>
             </div>
           </div>
 
-          <div class="mod">
+          <div class="mod is-locked">
             <div class="mod-top"><span class="mod-n">07</span><h3>Automações, CRM &amp; Vendas</h3></div>
-            <span class="tag-soon">Módulo</span>
+            <span class="tag-soon">Em breve</span>
             <p>Conecta as pontas do funil sem intervenção manual — o output de um agente vira o input do
               próximo, e o lead não some no meio do caminho.</p>
             <p class="mod-out"><b>Entregável:</b> funil rodando ponta a ponta.</p>
             <div class="pill-row"><span class="pill">em construção</span></div>
           </div>
 
-          <div class="mod">
+          <div class="mod is-locked">
             <div class="mod-top"><span class="mod-n">08</span><h3>Sistemas</h3></div>
-            <span class="tag-soon">Módulo</span>
+            <span class="tag-soon">Em breve</span>
             <p>Constrói o backend por trás da operação — integrações, banco de dados, APIs. O que sustenta
               os outros agentes por baixo dos panos.</p>
             <p class="mod-out"><b>Entregável:</b> sistema interno rodando em produção.</p>
@@ -1645,58 +1660,68 @@ git commit -m "primeiro commit"</pre>
         <h1 class="sec-title">Kit do aluno</h1>
         <p class="sec-lead measure">Downloads, mapas e recursos que vão te ajudar durante e depois da aula.</p>
 
-        <div class="grid grid-2">
-          <div class="res"><span class="chip">Agente</span>
+        <div class="kit-filter" role="group" aria-label="Filtrar o kit por categoria">
+          <button type="button" data-kit="todos" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>Todos</button>
+          <button type="button" data-kit="agentes" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14"/><path d="M8 10l2.5 2L8 14"/><path d="M13 15h3"/></svg>Agentes</button>
+          <button type="button" data-kit="ide" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14"/><path d="M9 5v14"/></svg>IDE</button>
+          <button type="button" data-kit="github" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="6" r="2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="7" r="2"/><path d="M7 8v8"/><path d="M17 9v2c0 2-2 3-4 3H9"/></svg>GitHub</button>
+          <button type="button" data-kit="infra" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="18" height="6"/><rect x="3" y="14" width="18" height="6"/><path d="M7 7h.5"/><path d="M7 17h.5"/></svg>Infra</button>
+          <button type="button" data-kit="materiais" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 4h12v16H7a2 2 0 01-2-2z"/><path d="M5 17h12"/></svg>Materiais</button>
+        </div>
+
+        <div class="grid grid-2" id="kit-grid">
+          <div class="res" data-cat="agentes"><span class="chip">Agente</span>
             <h3>Instalar Claude Code</h3><p>Documentação oficial, passo a passo pelo terminal.</p>
             <div class="pill-row"><a class="pill" href="https://claude.com/claude-code">claude.com/claude-code</a></div></div>
-          <div class="res"><span class="chip">Agente</span>
+          <div class="res" data-cat="agentes"><span class="chip">Agente</span>
             <h3>Baixar Claude Desktop</h3><p>Interface visual completa, sem terminal.</p>
             <div class="pill-row"><a class="pill" href="https://claude.ai/download">claude.ai/download</a></div></div>
-          <div class="res"><span class="chip">Agente</span>
+          <div class="res" data-cat="agentes"><span class="chip">Agente</span>
             <h3>Instalar Codex</h3><p>Equivalente ao Claude Code, pela OpenAI.</p>
             <div class="pill-row"><a class="pill" href="https://developers.openai.com/codex/cli">developers.openai.com/codex/cli</a></div></div>
-          <div class="res"><span class="chip">Agente</span>
+          <div class="res" data-cat="agentes"><span class="chip">Agente</span>
             <h3>Baixar ChatGPT Desktop</h3><p>A versão visual da OpenAI, sem terminal.</p>
             <div class="pill-row"><a class="pill" href="https://chatgpt.com/download">chatgpt.com/download</a></div></div>
-          <div class="res"><span class="chip">Agente</span>
+          <div class="res" data-cat="agentes"><span class="chip">Agente</span>
             <h3>Instalar Gemini CLI</h3><p>Agente de terminal do Google, open source.</p>
             <div class="pill-row"><a class="pill" href="https://github.com/google-gemini/gemini-cli">github.com/google-gemini/gemini-cli</a></div></div>
-          <div class="res"><span class="chip">GitHub</span>
-            <h3>Criar conta no GitHub</h3><p>Onde o código mora e o histórico fica.</p>
-            <div class="pill-row"><a class="pill" href="https://github.com/signup">github.com/signup</a></div></div>
-          <div class="res"><span class="chip">GitHub</span>
-            <h3>Baixar o Git</h3><p>O programa que roda na sua máquina — precisa dos dois.</p>
-            <div class="pill-row"><a class="pill" href="https://git-scm.com/downloads">git-scm.com/downloads</a></div></div>
-          <div class="res"><span class="chip">IDE</span>
-            <h3>Orca</h3><p>O ADE do treinamento — agentes em paralelo por worktree. Open source.</p>
-            <div class="pill-row"><a class="pill" href="https://onorca.dev/">onorca.dev</a></div></div>
-          <div class="res"><span class="chip">IDE</span>
-            <h3>Antigravity</h3><p>IDE agêntica do Google, gratuita.</p>
-            <div class="pill-row"><a class="pill" href="https://antigravity.google/">antigravity.google</a></div></div>
-          <div class="res"><span class="chip">IDE</span>
-            <h3>Zed · Cursor · VS Code</h3><p>Alternativas conhecidas, da mais leve à mais popular.</p>
-            <div class="pill-row"><a class="pill" href="https://zed.dev/">zed.dev</a><a class="pill" href="https://cursor.com/">cursor.com</a><a class="pill" href="https://code.visualstudio.com/">code.visualstudio.com</a></div></div>
-          <div class="res"><span class="chip">Infra</span>
-            <h3>Hostinger</h3><p>Domínio, hospedagem e VPS no mesmo painel.</p>
-            <div class="pill-row"><a class="pill" href="https://www.hostinger.com.br/">hostinger.com.br</a></div></div>
-          <div class="res"><span class="chip">Infra</span>
-            <h3>Registro.br</h3><p>Quem de fato administra os domínios <code>.com.br</code>.</p>
-            <div class="pill-row"><a class="pill" href="https://registro.br/">registro.br</a></div></div>
-          <div class="res"><span class="chip">Base</span>
+          <div class="res" data-cat="agentes"><span class="chip">Base</span>
             <h3>Node.js</h3><p>Pré-requisito dos três agentes de terminal.</p>
             <div class="pill-row"><a class="pill" href="https://nodejs.org">nodejs.org</a></div></div>
-          <div class="res"><span class="chip">Skills</span>
+          <div class="res" data-cat="github"><span class="chip">GitHub</span>
+            <h3>Criar conta no GitHub</h3><p>Onde o código mora e o histórico fica.</p>
+            <div class="pill-row"><a class="pill" href="https://github.com/signup">github.com/signup</a></div></div>
+          <div class="res" data-cat="github"><span class="chip">GitHub</span>
+            <h3>Baixar o Git</h3><p>O programa que roda na sua máquina — precisa dos dois.</p>
+            <div class="pill-row"><a class="pill" href="https://git-scm.com/downloads">git-scm.com/downloads</a></div></div>
+          <div class="res" data-cat="ide"><span class="chip">IDE</span>
+            <h3>Orca</h3><p>O ADE do treinamento — agentes em paralelo por worktree. Open source.</p>
+            <div class="pill-row"><a class="pill" href="https://onorca.dev/">onorca.dev</a></div></div>
+          <div class="res" data-cat="ide"><span class="chip">IDE</span>
+            <h3>Antigravity</h3><p>IDE agêntica do Google, gratuita.</p>
+            <div class="pill-row"><a class="pill" href="https://antigravity.google/">antigravity.google</a></div></div>
+          <div class="res" data-cat="ide"><span class="chip">IDE</span>
+            <h3>Zed · Cursor · VS Code</h3><p>Alternativas conhecidas, da mais leve à mais popular.</p>
+            <div class="pill-row"><a class="pill" href="https://zed.dev/">zed.dev</a><a class="pill" href="https://cursor.com/">cursor.com</a><a class="pill" href="https://code.visualstudio.com/">code.visualstudio.com</a></div></div>
+          <div class="res" data-cat="infra"><span class="chip">Infra</span>
+            <h3>Hostinger</h3><p>Domínio, hospedagem e VPS no mesmo painel.</p>
+            <div class="pill-row"><a class="pill" href="https://www.hostinger.com.br/">hostinger.com.br</a></div></div>
+          <div class="res" data-cat="infra"><span class="chip">Infra</span>
+            <h3>Registro.br</h3><p>Quem de fato administra os domínios <code>.com.br</code>.</p>
+            <div class="pill-row"><a class="pill" href="https://registro.br/">registro.br</a></div></div>
+          <div class="res" data-cat="materiais"><span class="chip">Skills</span>
             <h3>skills.sh</h3><p>Marketplace de skills mantido pela Vercel.</p>
             <div class="pill-row"><a class="pill" href="https://www.skills.sh/">skills.sh</a></div></div>
-          <div class="res"><span class="chip">Referência</span>
+          <div class="res" data-cat="materiais"><span class="chip">Referência</span>
             <h3>Biblioteca de Anúncios da Meta</h3><p>Veja o que seus concorrentes estão rodando agora.</p>
             <div class="pill-row"><a class="pill" href="https://www.facebook.com/ads/library/">facebook.com/ads/library</a></div></div>
-          <div class="res"><span class="chip">Mapa</span>
+          <div class="res" data-cat="materiais"><span class="chip">Mapa</span>
             <h3>Mapa Completo do Primeiro Token ao Agente de Produção</h3>
             <p>77 tópicos, com analogia da empresa de engenharia.</p></div>
-          <div class="res" style="grid-column:1/-1"><span class="chip">Notion</span>
+          <div class="res is-wide" data-cat="materiais" style="grid-column:1/-1"><span class="chip">Notion</span>
             <h3>Outros materiais</h3><p>O acervo de apoio do treinamento — o que não coube no guia.</p>
             <div class="pill-row"><a class="pill" href="https://app.notion.com/p/c8428291b4654c0daca22a0264dc0216?v=3e2318adcfda81a594df000c7ab455e1">Abrir no Notion ↗</a></div></div>
+          <div class="res res-filler" hidden aria-hidden="true"></div>
         </div>
       </section>
 
@@ -1861,6 +1886,46 @@ git commit -m "primeiro commit"</pre>
       });
     });
   });
+
+  /* filtro do kit do aluno */
+  var kitGrid = document.getElementById("kit-grid");
+  if (kitGrid) {
+    var kitCards = Array.prototype.slice.call(kitGrid.querySelectorAll(".res[data-cat]"));
+    var kitFiller = kitGrid.querySelector(".res-filler");
+    var kitBtns = Array.prototype.slice.call(document.querySelectorAll("[data-kit]"));
+    var kitAtual = "todos";
+    function kitApply(cat){
+      kitAtual = cat;
+      kitCards.forEach(function(c){
+        c.hidden = cat !== "todos" && c.getAttribute("data-cat") !== cat;
+      });
+      kitBtns.forEach(function(b){
+        var on = b.getAttribute("data-kit") === cat;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+      /* celula vazia no fim do grid fica visivel: preenche quando a conta nao fecha */
+      var cols = getComputedStyle(kitGrid).gridTemplateColumns.split(" ").length;
+      var vis = kitCards.filter(function(c){
+        return !c.hidden && c.className.indexOf("is-wide") < 0;
+      }).length;
+      kitFiller.hidden = cols < 2 || vis % cols === 0;
+      /* o preenchedor tem que vir antes do card de largura cheia,
+         senao ele abre uma linha nova e sobra outra celula vazia */
+      if (!kitFiller.hidden) {
+        var largo = kitCards.filter(function(c){
+          return !c.hidden && c.className.indexOf("is-wide") >= 0;
+        })[0];
+        if (largo) { kitGrid.insertBefore(kitFiller, largo); }
+        else { kitGrid.appendChild(kitFiller); }
+      }
+    }
+    kitBtns.forEach(function(b){
+      b.addEventListener("click", function(){ kitApply(b.getAttribute("data-kit")); });
+    });
+    window.addEventListener("resize", function(){ kitApply(kitAtual); });
+    kitApply("todos");
+  }
 
   /* painéis de referência */
   Array.prototype.forEach.call(document.querySelectorAll(".ref-toggle"), function(btn){
