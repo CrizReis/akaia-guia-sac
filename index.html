@@ -336,6 +336,17 @@ button.pill{cursor:pointer}
 .kit-filter button.is-on{background:var(--akai); color:#fff}
 .kit-filter button:not(.is-on):hover{color:var(--shiro)}
 .kit-filter + .grid{margin-top:14px}
+.port-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1px;
+  background:var(--border); border:1px solid var(--border); margin-top:26px}
+.port-card{background:var(--kuro-2); display:flex; flex-direction:column}
+.port-img{display:block; aspect-ratio:16/10; background:var(--kuro); overflow:hidden}
+.port-img img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s var(--ease)}
+.port-card:hover .port-img img{transform:scale(1.03)}
+.port-body{padding:20px 22px 22px; display:flex; flex-direction:column; gap:7px}
+.port-by{font-family:"JetBrains Mono",monospace; font-size:.74rem; letter-spacing:.04em; color:var(--haiiro)}
+.port-vazio{grid-column:1/-1; background:var(--kuro-2); padding:44px 28px; display:flex;
+  flex-direction:column; align-items:flex-start; gap:8px}
+.port-vazio h3{font-family:"Space Grotesk",sans-serif}
 .capa{position:relative; aspect-ratio:4/1; min-height:190px; overflow:hidden;
   background:#120B0C; border:1px solid var(--border); margin-bottom:38px}
 .capa canvas{position:absolute; inset:0; display:block; width:100%; height:100%;
@@ -626,6 +637,9 @@ document.documentElement.setAttribute("data-theme","light");}}catch(e){}})();
       <a href="#kit" data-nav="kit">
         <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
         Kit do aluno</a>
+      <a href="#portfolio" data-nav="portfolio">
+        <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v9H2zM6 4V2.5h4V4M2 8h12"/></svg>
+        Portfólio</a>
     </nav>
 
     <div class="side-foot">
@@ -1752,6 +1766,34 @@ git commit -m "primeiro commit"</pre>
             <h3>Outros materiais</h3><p>O acervo de apoio do treinamento — o que não coube no guia.</p>
             <div class="pill-row"><a class="pill" href="https://app.notion.com/p/c8428291b4654c0daca22a0264dc0216?v=3e2318adcfda81a594df000c7ab455e1">Abrir no Notion ↗</a></div></div>
           <div class="res res-filler" hidden aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <!-- ========== PORTFOLIO ========== -->
+      <section class="route" data-route="portfolio" data-title="Portfólio">
+        <p class="eyebrow">Vitrine</p>
+        <h1 class="sec-title">Portfólio</h1>
+        <p class="sec-lead measure">Projetos construídos com o que você aprende aqui — cada um mostra quem fez,
+          de qual módulo saiu e onde está no ar.</p>
+
+        <div class="port-grid" id="port-grid">
+          <!-- MODELO DE CARD (copiar para dentro de .port-grid e preencher):
+          <article class="port-card">
+            <a class="port-img" href="URL-DO-PROJETO"><img src="URL-DA-CAPA" alt="Capa do projeto" loading="lazy"></a>
+            <div class="port-body">
+              <span class="chip">Website com IA</span>
+              <h3>Nome do projeto</h3>
+              <p>O que é, em uma linha.</p>
+              <p class="port-by">Por Nome de quem fez</p>
+              <div class="pill-row"><a class="pill" href="URL-DO-PROJETO">Ver no ar ↗</a></div>
+            </div>
+          </article>
+          -->
+          <div class="port-vazio">
+            <span class="chip">Em construção</span>
+            <h3>Os primeiros projetos entram aqui.</h3>
+            <p>Estamos construindo juntos. Cada projeto publicado aparece nesta página, com link para ver no ar.</p>
+          </div>
         </div>
       </section>
 
