@@ -337,20 +337,21 @@ button.pill{cursor:pointer}
 .kit-filter button:not(.is-on):hover{color:var(--shiro)}
 .kit-filter + .grid{margin-top:14px}
 .capa{position:relative; aspect-ratio:4/1; min-height:190px; overflow:hidden;
-  background:#0B0B0E; border:1px solid var(--border); margin-bottom:38px}
+  background:#120B0C; border:1px solid var(--border); margin-bottom:38px}
 .capa canvas{position:absolute; inset:0; display:block; width:100%; height:100%;
   pointer-events:none; z-index:0}
-/* veu escuro do lado do texto: a luz nasce da direita e nao disputa com a headline */
-.capa::after{content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
-  background:linear-gradient(100deg, #0B0B0E 0%, rgba(11,11,14,.94) 30%,
-    rgba(11,11,14,.55) 52%, rgba(11,11,14,0) 76%)}
+/* sem WebGL2: a capa fica com um brilho parado no lugar da fita */
+.capa.sem-gl{background:
+  radial-gradient(38% 95% at 70% 38%, rgba(255,214,206,.16), transparent 70%),
+  radial-gradient(62% 130% at 68% 45%, rgba(255,44,44,.30), transparent 62%), #120B0C}
+.capa.sem-gl canvas{display:none}
 .capa-txt{position:relative; z-index:2; height:100%; display:flex; flex-direction:column;
-  justify-content:center; gap:9px; padding:0 clamp(22px,4vw,46px); max-width:min(640px,72%)}
+  justify-content:center; gap:8px; padding:0 clamp(22px,3.6vw,40px); max-width:min(540px,56%)}
 .capa-eyebrow{font-family:"JetBrains Mono",monospace; font-size:9.5px; font-weight:600;
   letter-spacing:.18em; text-transform:uppercase; color:var(--akai)}
 .capa h2{font-family:"Space Grotesk",sans-serif; font-weight:700; line-height:1.14;
-  font-size:clamp(1.25rem,2.5vw,2rem); color:#F4F2EC; margin:0}
-.capa p{font-size:clamp(.84rem,1.1vw,.97rem); line-height:1.5; color:#9C9CA6; margin:0}
+  font-size:clamp(1.15rem,1.9vw,1.5rem); color:#F4F2EC; margin:0}
+.capa p{font-size:clamp(.82rem,1vw,.9rem); line-height:1.5; color:#A1A1AA; margin:0}
 @media (max-width:860px){
   .capa{aspect-ratio:auto; min-height:0}
   .capa-txt{max-width:100%; padding:30px 22px; gap:8px}
@@ -1916,76 +1917,222 @@ git commit -m "primeiro commit"</pre>
     });
   });
 
-  /* capa animada da visao geral — fita de luz que se curva na direcao do cursor */
+  /* capa animada da visao geral: fita de seda torcida em WebGL2.
+     O shader desenha a luz pixel a pixel; o cursor entra como lente. */
   (function(){
     var cv = document.getElementById("capa-cv");
-    if (!cv || !cv.getContext) return;
-    var caixa = cv.parentElement, ctx = cv.getContext("2d");
+    if (!cv) return;
+    var caixa = cv.parentElement;
+    function semGL(){ caixa.classList.add("sem-gl"); }
+    var gl = cv.getContext("webgl2", {antialias: false, alpha: false, depth: false, stencil: false});
+    if (!gl) { semGL(); return; }
+
+    var VERT = "#version 300 es\n" +
+      "const vec2 V[3] = vec2[3](vec2(-1.0, -1.0), vec2(3.0, -1.0), vec2(-1.0, 3.0));\n" +
+      "void main(){ gl_Position = vec4(V[gl_VertexID], 0.0, 1.0); }";
+    var FRAG =
+      "#version 300 es\n" +
+      "precision highp float;\n" +
+      "\n" +
+      "uniform vec2  uRes;\n" +
+      "uniform float uTime;\n" +
+      "uniform vec2  uMouse;\n" +
+      "uniform float uHover;\n" +
+      "uniform vec3  uCor1;\n" +
+      "uniform vec3  uCor2;\n" +
+      "uniform vec3  uFundo;\n" +
+      "out vec4 saida;\n" +
+      "\n" +
+      "#define AMOSTRAS 72\n" +
+      "#define ECOS 3\n" +
+      "\n" +
+      "const float MEIA_LARGURA = 0.12;\n" +
+      "const float TORCIDAS     = 1.4;\n" +
+      "const float VEL_TORCIDA  = 0.6;\n" +
+      "const float MACIEZ       = 0.03;\n" +
+      "const float DOBRA        = 0.02;\n" +
+      "const float OSCILACAO    = 0.12;\n" +
+      "const float PESO_CORPO   = 0.6;\n" +
+      "const float PESO_FIO     = 0.4;\n" +
+      "const float RAIO_AURA    = 0.07;\n" +
+      "const float EXPOSICAO    = 2.5;\n" +
+      "\n" +
+      "/* caminho da fita: Bezier cubica, em unidades da altura da capa */\n" +
+      "const vec2 K0 = vec2(-0.90, -0.90);\n" +
+      "const vec2 K1 = vec2(-0.40,  0.75);\n" +
+      "const vec2 K2 = vec2( 2.20,  0.35);\n" +
+      "const vec2 K3 = vec2( 0.75, -1.00);\n" +
+      "\n" +
+      "vec2 ponto(vec2 a, vec2 b, vec2 c, vec2 d, float s){\n" +
+      "  float u = 1.0 - s;\n" +
+      "  return u*u*u*a + 3.0*u*u*s*b + 3.0*u*s*s*c + s*s*s*d;\n" +
+      "}\n" +
+      "vec2 rumo(vec2 a, vec2 b, vec2 c, vec2 d, float s){\n" +
+      "  float u = 1.0 - s;\n" +
+      "  return 3.0*u*u*(b - a) + 6.0*u*s*(c - b) + 3.0*s*s*(d - c);\n" +
+      "}\n" +
+      "\n" +
+      "/* ruido de gradiente intercalado (Jimenez 2014): tira o degrau de cor do escuro */\n" +
+      "float ruido(vec2 px, float q){\n" +
+      "  px += 5.588238 * mod(q, 64.0);\n" +
+      "  return fract(52.9829189 * fract(dot(px, vec2(0.06711056, 0.00583715))));\n" +
+      "}\n" +
+      "\n" +
+      "/* curva filmica, aproximacao ACES de Narkowicz */\n" +
+      "vec3 filmico(vec3 x){\n" +
+      "  return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);\n" +
+      "}\n" +
+      "\n" +
+      "/* uma passada da fita; os ecos repetem a curva deslocada, com fase propria */\n" +
+      "vec3 fita(vec2 p, float t, float eco){\n" +
+      "  float te = t + eco * 2.7;\n" +
+      "  vec2 desvio = eco * vec2(0.18, -0.12);\n" +
+      "  vec2 a = K0 + desvio + OSCILACAO * vec2(0.3 * sin(te * 0.31), 0.2 * cos(te * 0.23));\n" +
+      "  vec2 b = K1 + desvio + OSCILACAO * vec2(sin(te * 0.53), cos(te * 0.41));\n" +
+      "  vec2 c = K2 + desvio + OSCILACAO * vec2(cos(te * 0.47), sin(te * 0.59));\n" +
+      "  vec2 d = K3 + desvio + OSCILACAO * vec2(0.3 * cos(te * 0.29), 0.2 * sin(te * 0.37));\n" +
+      "\n" +
+      "  vec3 luz = vec3(0.0);\n" +
+      "  float n = float(AMOSTRAS);\n" +
+      "  for (int i = 0; i < AMOSTRAS; i++){\n" +
+      "    float s = (float(i) + 0.5) / n;\n" +
+      "    vec2 dif = p - ponto(a, b, c, d, s);\n" +
+      "    float d2 = dot(dif, dif);\n" +
+      "    if (d2 > 1.2) continue;\n" +
+      "\n" +
+      "    vec2 v = rumo(a, b, c, d, s);\n" +
+      "    float lv = max(length(v), 1e-4);\n" +
+      "    float passo = lv / n;\n" +
+      "    vec2 tg = v / lv;\n" +
+      "    vec2 nm = vec2(-tg.y, tg.x);\n" +
+      "\n" +
+      "    /* a fita gira: a largura vista encolhe, zera de lado e troca de face */\n" +
+      "    float giro = s * TORCIDAS * 6.28318 + te * VEL_TORCIDA + eco * 1.9;\n" +
+      "    float larg = MEIA_LARGURA * cos(giro);\n" +
+      "    float al = abs(larg);\n" +
+      "\n" +
+      "    float ao = dot(dif, tg);\n" +
+      "    float tr = dot(dif, nm);\n" +
+      "    float sa = passo * 1.1 + MACIEZ;\n" +
+      "    float ra = al + MACIEZ;\n" +
+      "    float q = 1.0 + tr * tr / (ra * ra);\n" +
+      "    float corpo = exp(-ao * ao / (sa * sa)) / (q * q);\n" +
+      "    float fio = corpo * pow(1.0 - al / MEIA_LARGURA, 4.0);\n" +
+      "    float aura = passo / (1.0 + d2 / (RAIO_AURA * RAIO_AURA));\n" +
+      "    float dens = passo / sqrt(al + DOBRA);\n" +
+      "    float pontas = sin(3.14159 * s);\n" +
+      "\n" +
+      "    vec3 tom = mix(uCor1, uCor2, smoothstep(-0.6, 0.6, larg / MEIA_LARGURA));\n" +
+      "    luz += pontas * (tom * (corpo * PESO_CORPO + fio * PESO_FIO) * dens + uCor1 * aura * 0.6);\n" +
+      "  }\n" +
+      "  return luz;\n" +
+      "}\n" +
+      "\n" +
+      "void main(){\n" +
+      "  vec2 p = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;\n" +
+      "  float t = uTime;\n" +
+      "\n" +
+      "  /* o cursor e uma lente: puxa o espaco ao redor dele */\n" +
+      "  vec2 dm = p - uMouse;\n" +
+      "  p -= dm * 0.35 * uHover * exp(-dot(dm, dm) / 0.05);\n" +
+      "\n" +
+      "  /* fumaca: as bordas ondulam devagar em vez de seguir a curva certinha */\n" +
+      "  p += 0.03 * vec2(sin(p.y * 4.1 + t * 0.7) + 0.5 * sin(p.y * 9.3 - t * 1.1),\n" +
+      "                   sin(p.x * 3.3 - t * 0.6) + 0.5 * sin(p.x * 7.7 + t * 0.9));\n" +
+      "\n" +
+      "  vec3 luz = vec3(0.0);\n" +
+      "  float peso = 1.0;\n" +
+      "  for (int e = 0; e < ECOS; e++){\n" +
+      "    luz += peso * fita(p, t, float(e));\n" +
+      "    peso *= 0.5;\n" +
+      "  }\n" +
+      "\n" +
+      "  vec3 cor = uFundo + filmico(luz * EXPOSICAO) * (1.0 - uFundo);\n" +
+      "  cor += (ruido(gl_FragCoord.xy, floor(t * 24.0)) - 0.5) / 255.0;\n" +
+      "  saida = vec4(clamp(cor, 0.0, 1.0), 1.0);\n" +
+      "}\n";
+
+    function compila(tipo, fonte){
+      var s = gl.createShader(tipo);
+      gl.shaderSource(s, fonte);
+      gl.compileShader(s);
+      if (gl.getShaderParameter(s, gl.COMPILE_STATUS)) return s;
+      console.error("capa:", gl.getShaderInfoLog(s));
+      return null;
+    }
+    var vs = compila(gl.VERTEX_SHADER, VERT), fs = compila(gl.FRAGMENT_SHADER, FRAG);
+    var prog = vs && fs && gl.createProgram();
+    if (!prog) { semGL(); return; }
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { semGL(); return; }
+    gl.useProgram(prog);
+    gl.bindVertexArray(gl.createVertexArray());
+
+    var U = {};
+    ["uRes", "uTime", "uMouse", "uHover", "uCor1", "uCor2", "uFundo"].forEach(function(n){
+      U[n] = gl.getUniformLocation(prog, n);
+    });
+    /* paleta: Akai no corpo e na aura, branco quente na face clara, fundo quase preto */
+    gl.uniform3f(U.uCor1, 0.656, 0.224, 0.224);
+    gl.uniform3f(U.uCor2, 0.879, 0.787, 0.781);
+    gl.uniform3f(U.uFundo, 0.071, 0.041, 0.045);
+
     var reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var w = 0, h = 0, t = 0, raf = 0, rodando = false;
-    var REP = {x: .70, y: .40};                 /* repouso, quando o mouse sai */
-    var alvo = {x: REP.x, y: REP.y}, suave = {x: REP.x, y: REP.y};
+    var tempo = reduz ? 12 : 0, antes = -1, raf = 0, naTela = true;
+    var mouse = {x: 0, y: 0, ax: 0, ay: 0, dentro: false, forca: 0};
 
-    function medir(){
-      var r = caixa.getBoundingClientRect();
-      var d = Math.min(window.devicePixelRatio || 1, 2);
-      w = r.width; h = r.height;
-      if (!w || !h) return;
-      cv.width = Math.round(w * d); cv.height = Math.round(h * d);
-      ctx.setTransform(d, 0, 0, d, 0, 0);
+    function desenha(dt){
+      var esc = Math.min(window.devicePixelRatio || 1, 2) * 0.5;   /* meia resolucao: a ampliacao amacia */
+      var w = Math.max(1, Math.round(cv.clientWidth * esc));
+      var h = Math.max(1, Math.round(cv.clientHeight * esc));
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+      mouse.forca += ((mouse.dentro ? 1 : 0) - mouse.forca) * (1 - Math.exp(-dt * 4));
+      var k = 1 - Math.exp(-dt * 6);
+      mouse.x += (mouse.ax - mouse.x) * k;
+      mouse.y += (mouse.ay - mouse.y) * k;
+      gl.viewport(0, 0, w, h);
+      gl.uniform2f(U.uRes, w, h);
+      gl.uniform1f(U.uTime, tempo);
+      gl.uniform2f(U.uMouse, mouse.x, mouse.y);
+      gl.uniform1f(U.uHover, mouse.forca * 0.8);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    function quadro(agora){
+      var dt = antes < 0 ? 0 : Math.min((agora - antes) / 1000, 0.05);
+      antes = agora;
+      tempo = (tempo + dt * 0.5) % 3600;                            /* meia velocidade: a fita respira */
+      desenha(dt);
+      raf = requestAnimationFrame(quadro);
+    }
+    function para(){ cancelAnimationFrame(raf); raf = 0; antes = -1; }
+    /* so anima com a capa na tela e a aba visivel; nas outras rotas o loop para */
+    function confere(){
+      if (reduz) { desenha(0); return; }
+      var deve = naTela && !document.hidden;
+      if (deve && !raf) { raf = requestAnimationFrame(quadro); }
+      else if (!deve && raf) { para(); }
     }
 
-    function fita(k){
-      var dx = suave.x - .5, dy = suave.y - .5;
-      var cx = w * (.66 + dx * .30) + Math.sin(t * .5 + k) * w * .03;
-      var cy = h * (-.30 + dy * .60) + Math.cos(t * .41 + k) * h * .10;
-      ctx.beginPath();
-      ctx.moveTo(-w * .12, h * (1.02 + k * .03));
-      ctx.quadraticCurveTo(cx, cy, w * 1.12, h * (.30 + k * .05 - dy * .12));
-      var esp = 3 + k * 11;
-      var cor = k < 1.2 ? "#FFE9E4" : "#FF2C2C";
-      ctx.lineWidth = esp;
-      ctx.strokeStyle = cor;
-      ctx.shadowColor = cor;
-      ctx.shadowBlur = esp * 3.4;
-      ctx.globalAlpha = .13 - k * .015;
-      ctx.stroke();
+    if (!reduz) {
+      window.addEventListener("pointermove", function(e){
+        if (e.pointerType !== "mouse") return;
+        var r = cv.getBoundingClientRect();
+        var dentro = e.clientX >= r.left && e.clientX <= r.right &&
+                     e.clientY >= r.top && e.clientY <= r.bottom;
+        mouse.ax = (e.clientX - r.left - r.width / 2) / (r.height || 1);
+        mouse.ay = (r.height / 2 - (e.clientY - r.top)) / (r.height || 1);
+        if (dentro && !mouse.dentro) { mouse.x = mouse.ax; mouse.y = mouse.ay; }
+        mouse.dentro = dentro;
+      }, {passive: true});
+    } else if (window.ResizeObserver) {
+      new ResizeObserver(function(){ desenha(0); }).observe(cv);
     }
-
-    function desenhar(){
-      if (!w || !h) return;
-      suave.x += (alvo.x - suave.x) * .055;
-      suave.y += (alvo.y - suave.y) * .055;
-      ctx.clearRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "lighter";
-      ctx.lineCap = "round";
-      for (var k = 0; k < 6; k++) fita(k * .5);
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-    }
-
-    function quadro(){ t += .006; desenhar(); raf = requestAnimationFrame(quadro); }
-    function liga(){ if (rodando || reduz) return; rodando = true; raf = requestAnimationFrame(quadro); }
-    function desliga(){ rodando = false; cancelAnimationFrame(raf); }
-
-    caixa.addEventListener("pointermove", function(e){
-      var r = caixa.getBoundingClientRect();
-      alvo.x = (e.clientX - r.left) / r.width;
-      alvo.y = (e.clientY - r.top) / r.height;
-    });
-    caixa.addEventListener("pointerleave", function(){ alvo.x = REP.x; alvo.y = REP.y; });
-    window.addEventListener("resize", function(){ medir(); desenhar(); });
-    document.addEventListener("visibilitychange", function(){
-      if (document.hidden) { desliga(); } else { liga(); }
-    });
-
-    medir(); desenhar();
-    /* so anima com a capa na tela: a rota muda e o canvas some */
+    cv.addEventListener("webglcontextlost", function(e){ e.preventDefault(); para(); semGL(); });
+    document.addEventListener("visibilitychange", confere);
     if (window.IntersectionObserver) {
-      new IntersectionObserver(function(ent){
-        if (ent[0].isIntersecting) { medir(); desenhar(); liga(); } else { desliga(); }
-      }).observe(caixa);
-    } else { liga(); }
+      new IntersectionObserver(function(ent){ naTela = ent[0].isIntersecting; confere(); }).observe(cv);
+    }
+    confere();
   })();
 
   /* filtro do kit do aluno */
