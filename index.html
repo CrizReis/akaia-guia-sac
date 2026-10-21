@@ -336,6 +336,25 @@ button.pill{cursor:pointer}
 .kit-filter button.is-on{background:var(--akai); color:#fff}
 .kit-filter button:not(.is-on):hover{color:var(--shiro)}
 .kit-filter + .grid{margin-top:14px}
+.capa{position:relative; aspect-ratio:4/1; min-height:190px; overflow:hidden;
+  background:#0B0B0E; border:1px solid var(--border); margin-bottom:38px}
+.capa canvas{position:absolute; inset:0; display:block; width:100%; height:100%;
+  pointer-events:none; z-index:0}
+/* veu escuro do lado do texto: a luz nasce da direita e nao disputa com a headline */
+.capa::after{content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(100deg, #0B0B0E 0%, rgba(11,11,14,.94) 30%,
+    rgba(11,11,14,.55) 52%, rgba(11,11,14,0) 76%)}
+.capa-txt{position:relative; z-index:2; height:100%; display:flex; flex-direction:column;
+  justify-content:center; gap:9px; padding:0 clamp(22px,4vw,46px); max-width:min(640px,72%)}
+.capa-eyebrow{font-family:"JetBrains Mono",monospace; font-size:9.5px; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--akai)}
+.capa h2{font-family:"Space Grotesk",sans-serif; font-weight:700; line-height:1.14;
+  font-size:clamp(1.25rem,2.5vw,2rem); color:#F4F2EC; margin:0}
+.capa p{font-size:clamp(.84rem,1.1vw,.97rem); line-height:1.5; color:#9C9CA6; margin:0}
+@media (max-width:860px){
+  .capa{aspect-ratio:auto; min-height:0}
+  .capa-txt{max-width:100%; padding:30px 22px; gap:8px}
+}
 .res[hidden]{display:none}
 .res-filler{background:var(--kuro-2)}
 .mod-out b{color:var(--shiro)}
@@ -637,6 +656,16 @@ document.documentElement.setAttribute("data-theme","light");}}catch(e){}})();
 
       <!-- ========== VISÃO GERAL ========== -->
       <section class="route" data-route="inicio" data-title="Visão geral">
+        <div class="capa">
+          <canvas id="capa-cv" aria-hidden="true"></canvas>
+          <div class="capa-txt">
+            <p class="capa-eyebrow">Material de apoio · Akaia Future</p>
+            <h2>O mapa do treinamento, sempre aberto.</h2>
+            <p>Fundação, conceitos, módulos e ferramentas — tudo o que você precisa durante a
+              aula, num lugar só.</p>
+          </div>
+        </div>
+
         <div class="hero">
           <div>
             <p class="eyebrow">Treinamento Akaia · Academia de IA</p>
@@ -1886,6 +1915,78 @@ git commit -m "primeiro commit"</pre>
       });
     });
   });
+
+  /* capa animada da visao geral — fita de luz que se curva na direcao do cursor */
+  (function(){
+    var cv = document.getElementById("capa-cv");
+    if (!cv || !cv.getContext) return;
+    var caixa = cv.parentElement, ctx = cv.getContext("2d");
+    var reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var w = 0, h = 0, t = 0, raf = 0, rodando = false;
+    var REP = {x: .70, y: .40};                 /* repouso, quando o mouse sai */
+    var alvo = {x: REP.x, y: REP.y}, suave = {x: REP.x, y: REP.y};
+
+    function medir(){
+      var r = caixa.getBoundingClientRect();
+      var d = Math.min(window.devicePixelRatio || 1, 2);
+      w = r.width; h = r.height;
+      if (!w || !h) return;
+      cv.width = Math.round(w * d); cv.height = Math.round(h * d);
+      ctx.setTransform(d, 0, 0, d, 0, 0);
+    }
+
+    function fita(k){
+      var dx = suave.x - .5, dy = suave.y - .5;
+      var cx = w * (.66 + dx * .30) + Math.sin(t * .5 + k) * w * .03;
+      var cy = h * (-.30 + dy * .60) + Math.cos(t * .41 + k) * h * .10;
+      ctx.beginPath();
+      ctx.moveTo(-w * .12, h * (1.02 + k * .03));
+      ctx.quadraticCurveTo(cx, cy, w * 1.12, h * (.30 + k * .05 - dy * .12));
+      var esp = 3 + k * 11;
+      var cor = k < 1.2 ? "#FFE9E4" : "#FF2C2C";
+      ctx.lineWidth = esp;
+      ctx.strokeStyle = cor;
+      ctx.shadowColor = cor;
+      ctx.shadowBlur = esp * 3.4;
+      ctx.globalAlpha = .13 - k * .015;
+      ctx.stroke();
+    }
+
+    function desenhar(){
+      if (!w || !h) return;
+      suave.x += (alvo.x - suave.x) * .055;
+      suave.y += (alvo.y - suave.y) * .055;
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "lighter";
+      ctx.lineCap = "round";
+      for (var k = 0; k < 6; k++) fita(k * .5);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    }
+
+    function quadro(){ t += .006; desenhar(); raf = requestAnimationFrame(quadro); }
+    function liga(){ if (rodando || reduz) return; rodando = true; raf = requestAnimationFrame(quadro); }
+    function desliga(){ rodando = false; cancelAnimationFrame(raf); }
+
+    caixa.addEventListener("pointermove", function(e){
+      var r = caixa.getBoundingClientRect();
+      alvo.x = (e.clientX - r.left) / r.width;
+      alvo.y = (e.clientY - r.top) / r.height;
+    });
+    caixa.addEventListener("pointerleave", function(){ alvo.x = REP.x; alvo.y = REP.y; });
+    window.addEventListener("resize", function(){ medir(); desenhar(); });
+    document.addEventListener("visibilitychange", function(){
+      if (document.hidden) { desliga(); } else { liga(); }
+    });
+
+    medir(); desenhar();
+    /* so anima com a capa na tela: a rota muda e o canvas some */
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function(ent){
+        if (ent[0].isIntersecting) { medir(); desenhar(); liga(); } else { desliga(); }
+      }).observe(caixa);
+    } else { liga(); }
+  })();
 
   /* filtro do kit do aluno */
   var kitGrid = document.getElementById("kit-grid");
