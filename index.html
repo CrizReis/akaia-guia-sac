@@ -327,6 +327,7 @@ button.pill{cursor:pointer}
 .mod.is-locked .mod-n{color:var(--haiiro)}
 .mod.is-locked h3{color:var(--haiiro)}
 .mod.is-locked p,.mod.is-locked .pill{opacity:.7}
+.mod-filler{background:transparent}
 .kit-filter{display:inline-flex; flex-wrap:wrap; gap:1px; margin-top:26px; width:fit-content;
   background:var(--border); border:1px solid var(--border)}
 .kit-filter button{display:inline-flex; align-items:center; gap:8px; font-family:inherit;
@@ -603,6 +604,7 @@ footer .logo-sm{height:22px; opacity:.5}
   .search-btn{min-width:0}
   .search-btn span,.search-btn kbd{display:none}
   .grid-3,.grid-2{grid-template-columns:1fr}
+  .mod-filler{display:none}
   .trail-row{grid-template-columns:40px 1fr auto; gap:14px}
   .trail-tag{display:none}
   footer{padding:30px 20px}
@@ -703,7 +705,7 @@ document.documentElement.setAttribute("data-theme","light");}}catch(e){}})();
               <a class="btn btn-primary" href="#aula/f1">Começar a fundação →</a>
               <a class="btn" href="#modulos">Ver os módulos</a>
             </div>
-            <p class="hero-meta">7 etapas de fundação · 8 módulos de construção · no seu ritmo</p>
+            <p class="hero-meta">7 etapas de fundação · 9 módulos de construção · no seu ritmo</p>
           </div>
 
           <div class="cycle">
@@ -1716,6 +1718,21 @@ If icons are not present, omit this section entirely.</pre>
             <p class="mod-out"><b>Entregável:</b> sistema interno rodando em produção.</p>
             <div class="pill-row"><span class="pill">em construção</span></div>
           </div>
+
+          <div class="mod is-locked">
+            <div class="mod-top"><span class="mod-n">09</span><h3>Habblaud</h3></div>
+            <span class="tag-soon">Em breve</span>
+            <p>Um escritório virtual para os seus agentes do Claude Code e do Codex: cada projeto vira uma
+              sala e cada sessão, um personagem que mostra ao vivo o que está fazendo — e levanta a mão
+              quando precisa da sua aprovação.</p>
+            <p class="mod-out"><b>Entregável:</b> Habblaud instalado na sua máquina, com os seus agentes
+              conectados.</p>
+            <div class="pill-row">
+              <a class="pill" href="https://habblaud.com/#instalar">habblaud.com ↗</a>
+              <a class="pill" href="https://github.com/marmottajr/habblaud">GitHub ↗</a>
+            </div>
+          </div>
+          <div class="mod mod-filler" aria-hidden="true"></div>
         </div>
       </section>
 
